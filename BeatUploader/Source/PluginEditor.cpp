@@ -27,11 +27,11 @@ BeatUploaderAudioProcessorEditor::BeatUploaderAudioProcessorEditor (BeatUploader
     auto componentFontSize = BinaryData::LexendRegular_ttfSize;
     componentFont = juce::Font(juce::Typeface::createSystemTypefaceFor(componentFontData, componentFontSize));
 
-    //// Title entrybox
-    //beatTitle.setTextToShowWhenEmpty("Enter song title...", textEditorEmptyFg);
-    //addAndMakeVisible(beatTitle);
+    // Song title entrybox
+    /*beatTitle.setTextToShowWhenEmpty("Song title...", );
+    addAndMakeVisible(beatTitle);*/
 
-    //// Description entrybox
+    // Song description entrybox
     //beatDesc.setTextToShowWhenEmpty("Enter song description...", textEditorEmptyFg);
     //beatDesc.setMultiLine(true);
     //beatDesc.setReturnKeyStartsNewLine(true);
@@ -55,6 +55,9 @@ BeatUploaderAudioProcessorEditor::BeatUploaderAudioProcessorEditor (BeatUploader
     //// Upload button
     //uploadBtn.setButtonText("Upload");
     //addAndMakeVisible(uploadBtn);
+
+    // Output info label
+    //addAndMakeVisible(operationOutput);
 
     setSize (screenWidth, screenHeight);
 }
@@ -87,7 +90,7 @@ void BeatUploaderAudioProcessorEditor::imageClicked()
 
     auto chooserFlags = juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles;
 
-    audioChooser->launchAsync(chooserFlags, [this](const juce::FileChooser& fc) {
+    imageChooser->launchAsync(chooserFlags, [this](const juce::FileChooser& fc) {
         auto file = fc.getResult();
 
         if (file.existsAsFile())
@@ -113,5 +116,5 @@ void BeatUploaderAudioProcessorEditor::paint(juce::Graphics& g)
 void BeatUploaderAudioProcessorEditor::resized()
 {
     // This is generally where you'll want to lay out the positions of any
-    // subcomponents in your editor..   
+    // subcomponents in your editor..
 }
