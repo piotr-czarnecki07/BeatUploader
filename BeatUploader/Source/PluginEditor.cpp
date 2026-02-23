@@ -17,25 +17,101 @@ BeatUploaderAudioProcessorEditor::BeatUploaderAudioProcessorEditor (BeatUploader
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
-    setSize (400, 300);
+
+    // Initialize custom fonts
+    auto titleFontData = BinaryData::MichromaRegular_ttf;
+    auto titleFontSize = BinaryData::MichromaRegular_ttfSize;
+    titleFont = juce::Font(juce::Typeface::createSystemTypefaceFor(titleFontData, titleFontSize));
+
+    auto componentFontData = BinaryData::LexendRegular_ttf;
+    auto componentFontSize = BinaryData::LexendRegular_ttfSize;
+    componentFont = juce::Font(juce::Typeface::createSystemTypefaceFor(componentFontData, componentFontSize));
+
+    //// Title entrybox
+    //beatTitle.setTextToShowWhenEmpty("Enter song title...", textEditorEmptyFg);
+    //addAndMakeVisible(beatTitle);
+
+    //// Description entrybox
+    //beatDesc.setTextToShowWhenEmpty("Enter song description...", textEditorEmptyFg);
+    //beatDesc.setMultiLine(true);
+    //beatDesc.setReturnKeyStartsNewLine(true);
+    //beatDesc.setScrollbarsShown(true);
+    //addAndMakeVisible(beatDesc);
+
+    //// Audio chooser button
+    //audioSel.setButtonText("Choose audio");
+    //addAndMakeVisible(audioSel);
+    //audioSel.onClick = [this] { audioClicked(); };
+
+    //// Image chooser button
+    //imageSel.setButtonText("Choose image");
+    //addAndMakeVisible(imageSel);
+    //imageSel.onClick = [this] { imageClicked(); };
+
+    //// Email entrybox
+    //emailInput.setTextToShowWhenEmpty("Enter email address associated with YouTube channel", textEditorEmptyFg);
+    //addAndMakeVisible(emailInput);
+
+    //// Upload button
+    //uploadBtn.setButtonText("Upload");
+    //addAndMakeVisible(uploadBtn);
+
+    setSize (screenWidth, screenHeight);
+}
+
+void BeatUploaderAudioProcessorEditor::audioClicked()
+{
+    audioChooser = std::make_unique<juce::FileChooser>(
+        "Choose audio file",
+        juce::File::getSpecialLocation(juce::File::userDocumentsDirectory),
+        "*.wav;*.mp3;*.flac;*.ogg"
+    );
+
+    auto chooserFlags = juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles;
+
+    audioChooser->launchAsync(chooserFlags, [this](const juce::FileChooser& fc){
+        auto file = fc.getResult();
+
+        if (file.existsAsFile())
+            file.loadFileAsData(audioFileData);
+    });
+}
+
+void BeatUploaderAudioProcessorEditor::imageClicked()
+{
+    imageChooser = std::make_unique<juce::FileChooser>(
+        "Choose image/gif file",
+        juce::File::getSpecialLocation(juce::File::userDocumentsDirectory),
+        "*.png;*.jpg;*.gif"
+    );
+
+    auto chooserFlags = juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles;
+
+    audioChooser->launchAsync(chooserFlags, [this](const juce::FileChooser& fc) {
+        auto file = fc.getResult();
+
+        if (file.existsAsFile())
+            file.loadFileAsData(imageFileData);
+    });
 }
 
 BeatUploaderAudioProcessorEditor::~BeatUploaderAudioProcessorEditor()
 {
 }
 
-void BeatUploaderAudioProcessorEditor::paint (juce::Graphics& g)
+void BeatUploaderAudioProcessorEditor::paint(juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
+    g.fillAll(pluginBg);
 
-    g.setColour (juce::Colours::white);
-    g.setFont (juce::FontOptions (15.0f));
-    g.drawFittedText ("Hello World!", getLocalBounds(), juce::Justification::centred, 1);
+    g.setColour(pluginFg);
+    g.setFont(titleFont);
+    g.setFont(47.5f);
+    g.drawText("BeatUploader", sideMargin, sideMargin, screenWidth - (2 * sideMargin), 85, juce::Justification::centredTop);
 }
 
 void BeatUploaderAudioProcessorEditor::resized()
 {
     // This is generally where you'll want to lay out the positions of any
-    // subcomponents in your editor..
+    // subcomponents in your editor..   
 }
