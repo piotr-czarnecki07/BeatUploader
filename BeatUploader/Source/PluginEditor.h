@@ -52,18 +52,18 @@ private:
     juce::MemoryBlock imageFileData;
     void imageClicked();
 
-    /*struct buttonFont : public juce::LookAndFeel_V4 {
+    struct buttonFont : public juce::LookAndFeel_V4 { // look and feel structure for textbuttons custom font
         buttonFont(juce::Font f) : fontToUse(f) {}
 
         juce::Font getTextButtonFont(juce::TextButton&, int buttonHeight) override
         {
-            return fontToUse.withHeight(buttonHeight * 1.0f);
+            return fontToUse.withHeight(12.5f);
         }
 
         juce::Font fontToUse;
     };
 
-    buttonFont buttonLookAndFeel{ componentFont };*/
+    buttonFont buttonLookAndFeel{ componentFont };
 
     juce::TextEditor emailInput;
 
@@ -75,10 +75,13 @@ private:
     juce::Colour const pluginBg = juce::Colour::fromString("ff1e1e1e");
     juce::Colour const pluginFg = juce::Colour::fromString("fdececec");
 
-    juce::Colour const textEditorBg = juce::Colour::fromString("ff171717");
-    juce::Colour const textEditorContentFg = juce::Colour::fromString("fde9e9e9");
+    juce::Colour const elementBg = juce::Colour::fromString("ff171717");
+    
+    juce::Colour const textEditorFg = juce::Colour::fromString("fde9e9e9");
     juce::Colour const textEditorEmptyFg = juce::Colour::fromString("ffb0b0b0");
     juce::Colour const textEditorHighlight = juce::Colour::fromString("b52874ed");
+
+    juce::Colour const buttonFg = juce::Colour::fromString("fefafafa");
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BeatUploaderAudioProcessorEditor)
 };

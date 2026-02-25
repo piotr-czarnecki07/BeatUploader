@@ -30,20 +30,20 @@ BeatUploaderAudioProcessorEditor::BeatUploaderAudioProcessorEditor (BeatUploader
     // Song title entrybox
     songTitle.setFont(componentFont.withHeight(18.0f));
     songTitle.setTextToShowWhenEmpty("Song title...", textEditorEmptyFg);
-    songTitle.setColour(juce::TextEditor::backgroundColourId, textEditorBg);
-    songTitle.setColour(juce::TextEditor::textColourId, textEditorContentFg);
+    songTitle.setColour(juce::TextEditor::backgroundColourId, elementBg);
+    songTitle.setColour(juce::TextEditor::textColourId, textEditorFg);
     songTitle.setColour(juce::TextEditor::highlightColourId, textEditorHighlight);
-    songTitle.setColour(juce::TextEditor::outlineColourId, textEditorBg);
+    songTitle.setColour(juce::TextEditor::outlineColourId, elementBg);
     songTitle.setColour(juce::TextEditor::focusedOutlineColourId, textEditorHighlight);
     addAndMakeVisible(songTitle);
 
     // Song description entrybox
     songDesc.setFont(componentFont.withHeight(18.0f));
     songDesc.setTextToShowWhenEmpty("Song description...", textEditorEmptyFg);
-    songDesc.setColour(juce::TextEditor::backgroundColourId, textEditorBg);
-    songDesc.setColour(juce::TextEditor::textColourId, textEditorContentFg);
+    songDesc.setColour(juce::TextEditor::backgroundColourId, elementBg);
+    songDesc.setColour(juce::TextEditor::textColourId, textEditorFg);
     songDesc.setColour(juce::TextEditor::highlightColourId, textEditorHighlight);
-    songDesc.setColour(juce::TextEditor::outlineColourId, textEditorBg);
+    songDesc.setColour(juce::TextEditor::outlineColourId, elementBg);
     songDesc.setColour(juce::TextEditor::focusedOutlineColourId, textEditorHighlight);
     songDesc.setMultiLine(true);
     songDesc.setReturnKeyStartsNewLine(true);
@@ -51,19 +51,20 @@ BeatUploaderAudioProcessorEditor::BeatUploaderAudioProcessorEditor (BeatUploader
     addAndMakeVisible(songDesc);
 
     // Audio chooser
-    //audioSel.setColour(juce::TextButton::buttonColourId);
-    //audioSel.setColour(juce::TextButton::buttonOnColourId);
-    //audioSel.setColour(juce::TextButton::textColourOnId);
-    //audioSel.setColour(juce::TextButton::textColourOffId);
-    /*audioSel.setCustom
+    audioSel.setColour(juce::TextButton::buttonColourId, elementBg);
+    audioSel.setColour(juce::TextButton::textColourOffId, buttonFg);
+    audioSel.setLookAndFeel(&buttonLookAndFeel);
     audioSel.setButtonText("Choose audio");
+    audioSel.onClick = [this] { audioClicked(); };
     addAndMakeVisible(audioSel);
-    audioSel.onClick = [this] { audioClicked(); };*/
 
-    //// Image chooser button
-    //imageSel.setButtonText("Choose image");
-    //addAndMakeVisible(imageSel);
-    //imageSel.onClick = [this] { imageClicked(); };
+    // Image chooser button
+    imageSel.setColour(juce::TextButton::buttonColourId, elementBg);
+    imageSel.setColour(juce::TextButton::textColourOffId, buttonFg);
+    imageSel.setLookAndFeel(&buttonLookAndFeel);
+    imageSel.setButtonText("Choose image");
+    addAndMakeVisible(imageSel);
+    imageSel.onClick = [this] { imageClicked(); };
 
     //// Email entrybox
     //emailInput.setTextToShowWhenEmpty("Enter email address associated with YouTube channel", textEditorEmptyFg);
@@ -76,7 +77,12 @@ BeatUploaderAudioProcessorEditor::BeatUploaderAudioProcessorEditor (BeatUploader
     // Output info label
     //addAndMakeVisible(operationOutput);
 
-    setSize (screenWidth, screenHeight);
+    setSize(screenWidth, screenHeight);
+}
+
+BeatUploaderAudioProcessorEditor::~BeatUploaderAudioProcessorEditor()
+{
+    audioSel.setLookAndFeel(nullptr);
 }
 
 void BeatUploaderAudioProcessorEditor::audioClicked()
@@ -115,10 +121,6 @@ void BeatUploaderAudioProcessorEditor::imageClicked()
     });
 }
 
-BeatUploaderAudioProcessorEditor::~BeatUploaderAudioProcessorEditor()
-{
-}
-
 void BeatUploaderAudioProcessorEditor::paint(juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
@@ -136,11 +138,15 @@ void BeatUploaderAudioProcessorEditor::resized()
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
 
-    int yPostion = 20 + (2 * sideMargin) + 55; // position on y axis where to draw the next element
+    int yPosition = 20 + (2 * sideMargin) + 55; // position on y axis where to draw the next element
 
-    songTitle.setBounds(sideMargin, yPostion, screenWidth - (2 * sideMargin), 27);
-    yPostion += (27 + elementMargin);
+    songTitle.setBounds(sideMargin, yPosition, screenWidth - (2 * sideMargin), 27);
+    yPosition += (27 + elementMargin);
 
-    songDesc.setBounds(sideMargin, yPostion, screenWidth - (2 * sideMargin), 130);
-    yPostion += (130 + elementMargin);
+    songDesc.setBounds(sideMargin, yPosition, screenWidth - (2 * sideMargin), 130);
+    yPosition += (130 + elementMargin);
+
+    audioSel.setBounds(sideMargin, yPosition, 110, 24);
+    imageSel.setBounds(screenWidth - (sideMargin + 110), yPosition, 110, 24);
+    yPosition += (24 + (4 * sideMargin));
 }
