@@ -31,8 +31,8 @@ private:
     // Constants
     int const screenWidth = 375;
     int const screenHeight = 575;
-    int const sideMargin = 15;
-    int const elementMaring = 10;
+    int const sideMargin = 25;
+    int const elementMargin = 10;
 
     // Custom fonts
     juce::Font titleFont;
@@ -61,6 +61,11 @@ private:
     // Colors definitions
     juce::Colour const pluginBg = juce::Colour::fromString("ff1e1e1e");
     juce::Colour const pluginFg = juce::Colour::fromString("fdececec");
+
+    juce::Colour const textEditorBg = juce::Colour::fromString("ff171717");
+    juce::Colour const textEditorContentFg = juce::Colour::fromString("fde9e9e9");
+    juce::Colour const textEditorEmptyFg = juce::Colour::fromString("ffb0b0b0");
+    juce::Colour const textEditorHighlight = juce::Colour::fromString("b52874ed");
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BeatUploaderAudioProcessorEditor)
 };

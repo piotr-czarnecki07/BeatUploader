@@ -28,8 +28,14 @@ BeatUploaderAudioProcessorEditor::BeatUploaderAudioProcessorEditor (BeatUploader
     componentFont = juce::Font(juce::Typeface::createSystemTypefaceFor(componentFontData, componentFontSize));
 
     // Song title entrybox
-    /*beatTitle.setTextToShowWhenEmpty("Song title...", );
-    addAndMakeVisible(beatTitle);*/
+    beatTitle.setFont(componentFont.withHeight(18.0f));
+    beatTitle.setTextToShowWhenEmpty("Song title...", textEditorEmptyFg);
+    beatTitle.setColour(juce::TextEditor::backgroundColourId, textEditorBg);
+    beatTitle.setColour(juce::TextEditor::textColourId, textEditorContentFg);
+    beatTitle.setColour(juce::TextEditor::highlightColourId, textEditorHighlight);
+    beatTitle.setColour(juce::TextEditor::outlineColourId, textEditorBg);
+    beatTitle.setColour(juce::TextEditor::focusedOutlineColourId, textEditorHighlight);
+    addAndMakeVisible(beatTitle);
 
     // Song description entrybox
     //beatDesc.setTextToShowWhenEmpty("Enter song description...", textEditorEmptyFg);
@@ -107,14 +113,20 @@ void BeatUploaderAudioProcessorEditor::paint(juce::Graphics& g)
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll(pluginBg);
 
+    // Draw plugin title
     g.setColour(pluginFg);
     g.setFont(titleFont);
     g.setFont(47.5f);
-    g.drawText("BeatUploader", sideMargin, sideMargin, screenWidth - (2 * sideMargin), 85, juce::Justification::centredTop);
+    g.drawText("BeatUploader", sideMargin, 20, screenWidth - (2 * sideMargin), 50, juce::Justification::centredTop);
 }
 
 void BeatUploaderAudioProcessorEditor::resized()
 {
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
+
+    int yPostion = 20 + (2 * sideMargin) + 55; // position on y axis where to draw the next element
+
+    beatTitle.setBounds(sideMargin, yPostion, screenWidth - (2 * sideMargin), 27);
+    yPostion += (27 + elementMargin);
 }
