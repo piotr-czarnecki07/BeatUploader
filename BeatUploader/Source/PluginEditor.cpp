@@ -28,26 +28,37 @@ BeatUploaderAudioProcessorEditor::BeatUploaderAudioProcessorEditor (BeatUploader
     componentFont = juce::Font(juce::Typeface::createSystemTypefaceFor(componentFontData, componentFontSize));
 
     // Song title entrybox
-    beatTitle.setFont(componentFont.withHeight(18.0f));
-    beatTitle.setTextToShowWhenEmpty("Song title...", textEditorEmptyFg);
-    beatTitle.setColour(juce::TextEditor::backgroundColourId, textEditorBg);
-    beatTitle.setColour(juce::TextEditor::textColourId, textEditorContentFg);
-    beatTitle.setColour(juce::TextEditor::highlightColourId, textEditorHighlight);
-    beatTitle.setColour(juce::TextEditor::outlineColourId, textEditorBg);
-    beatTitle.setColour(juce::TextEditor::focusedOutlineColourId, textEditorHighlight);
-    addAndMakeVisible(beatTitle);
+    songTitle.setFont(componentFont.withHeight(18.0f));
+    songTitle.setTextToShowWhenEmpty("Song title...", textEditorEmptyFg);
+    songTitle.setColour(juce::TextEditor::backgroundColourId, textEditorBg);
+    songTitle.setColour(juce::TextEditor::textColourId, textEditorContentFg);
+    songTitle.setColour(juce::TextEditor::highlightColourId, textEditorHighlight);
+    songTitle.setColour(juce::TextEditor::outlineColourId, textEditorBg);
+    songTitle.setColour(juce::TextEditor::focusedOutlineColourId, textEditorHighlight);
+    addAndMakeVisible(songTitle);
 
     // Song description entrybox
-    //beatDesc.setTextToShowWhenEmpty("Enter song description...", textEditorEmptyFg);
-    //beatDesc.setMultiLine(true);
-    //beatDesc.setReturnKeyStartsNewLine(true);
-    //beatDesc.setScrollbarsShown(true);
-    //addAndMakeVisible(beatDesc);
+    songDesc.setFont(componentFont.withHeight(18.0f));
+    songDesc.setTextToShowWhenEmpty("Song description...", textEditorEmptyFg);
+    songDesc.setColour(juce::TextEditor::backgroundColourId, textEditorBg);
+    songDesc.setColour(juce::TextEditor::textColourId, textEditorContentFg);
+    songDesc.setColour(juce::TextEditor::highlightColourId, textEditorHighlight);
+    songDesc.setColour(juce::TextEditor::outlineColourId, textEditorBg);
+    songDesc.setColour(juce::TextEditor::focusedOutlineColourId, textEditorHighlight);
+    songDesc.setMultiLine(true);
+    songDesc.setReturnKeyStartsNewLine(true);
+    songDesc.setScrollbarsShown(true);
+    addAndMakeVisible(songDesc);
 
-    //// Audio chooser button
-    //audioSel.setButtonText("Choose audio");
-    //addAndMakeVisible(audioSel);
-    //audioSel.onClick = [this] { audioClicked(); };
+    // Audio chooser
+    //audioSel.setColour(juce::TextButton::buttonColourId);
+    //audioSel.setColour(juce::TextButton::buttonOnColourId);
+    //audioSel.setColour(juce::TextButton::textColourOnId);
+    //audioSel.setColour(juce::TextButton::textColourOffId);
+    /*audioSel.setCustom
+    audioSel.setButtonText("Choose audio");
+    addAndMakeVisible(audioSel);
+    audioSel.onClick = [this] { audioClicked(); };*/
 
     //// Image chooser button
     //imageSel.setButtonText("Choose image");
@@ -127,6 +138,9 @@ void BeatUploaderAudioProcessorEditor::resized()
 
     int yPostion = 20 + (2 * sideMargin) + 55; // position on y axis where to draw the next element
 
-    beatTitle.setBounds(sideMargin, yPostion, screenWidth - (2 * sideMargin), 27);
+    songTitle.setBounds(sideMargin, yPostion, screenWidth - (2 * sideMargin), 27);
     yPostion += (27 + elementMargin);
+
+    songDesc.setBounds(sideMargin, yPostion, screenWidth - (2 * sideMargin), 130);
+    yPostion += (130 + elementMargin);
 }

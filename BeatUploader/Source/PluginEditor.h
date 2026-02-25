@@ -39,8 +39,8 @@ private:
     juce::Font componentFont;
 
     // Graifc components
-    juce::TextEditor beatTitle; // enter song title
-    juce::TextEditor beatDesc; // enter song description
+    juce::TextEditor songTitle; // enter song title
+    juce::TextEditor songDesc; // enter song description
 
     juce::TextButton audioSel; // audio file dialog
     std::unique_ptr<juce::FileChooser> audioChooser;
@@ -51,6 +51,19 @@ private:
     std::unique_ptr<juce::FileChooser> imageChooser;
     juce::MemoryBlock imageFileData;
     void imageClicked();
+
+    /*struct buttonFont : public juce::LookAndFeel_V4 {
+        buttonFont(juce::Font f) : fontToUse(f) {}
+
+        juce::Font getTextButtonFont(juce::TextButton&, int buttonHeight) override
+        {
+            return fontToUse.withHeight(buttonHeight * 1.0f);
+        }
+
+        juce::Font fontToUse;
+    };
+
+    buttonFont buttonLookAndFeel{ componentFont };*/
 
     juce::TextEditor emailInput;
 
