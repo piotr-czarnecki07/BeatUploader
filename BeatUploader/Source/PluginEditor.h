@@ -68,6 +68,7 @@ private:
     juce::TextEditor emailInput;
 
     juce::TextButton uploadBtn;
+    void uploadClicked();
 
     juce::Label operationOutput; // displays if operation was successful and if not, then what went wrong
 

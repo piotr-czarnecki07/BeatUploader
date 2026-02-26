@@ -63,8 +63,8 @@ BeatUploaderAudioProcessorEditor::BeatUploaderAudioProcessorEditor (BeatUploader
     imageSel.setColour(juce::TextButton::textColourOffId, buttonFg);
     imageSel.setLookAndFeel(&buttonLookAndFeel);
     imageSel.setButtonText("Choose image");
-    addAndMakeVisible(imageSel);
     imageSel.onClick = [this] { imageClicked(); };
+    addAndMakeVisible(imageSel);
 
     // Email entrybox
     emailInput.setFont(componentFont.withHeight(18.0f));
@@ -76,9 +76,13 @@ BeatUploaderAudioProcessorEditor::BeatUploaderAudioProcessorEditor (BeatUploader
     emailInput.setColour(juce::TextEditor::focusedOutlineColourId, textEditorHighlight);
     addAndMakeVisible(emailInput);
 
-    //// Upload button
-    //uploadBtn.setButtonText("Upload");
-    //addAndMakeVisible(uploadBtn);
+    // Upload button
+    uploadBtn.setColour(juce::TextButton::buttonColourId, elementBg);
+    uploadBtn.setColour(juce::TextButton::textColourOffId, buttonFg);
+    uploadBtn.setLookAndFeel(&buttonLookAndFeel);
+    uploadBtn.setButtonText("Upload");
+    uploadBtn.onClick = [this] { uploadClicked(); };
+    addAndMakeVisible(uploadBtn);
 
     // Output info label
     //addAndMakeVisible(operationOutput);
@@ -127,6 +131,11 @@ void BeatUploaderAudioProcessorEditor::imageClicked()
     });
 }
 
+void BeatUploaderAudioProcessorEditor::uploadClicked()
+{
+
+}
+
 void BeatUploaderAudioProcessorEditor::paint(juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
@@ -157,4 +166,7 @@ void BeatUploaderAudioProcessorEditor::resized()
     yPosition += (24 + (2 * sideMargin));
 
     emailInput.setBounds(sideMargin, yPosition, screenWidth - (2 * sideMargin), 27);
+    yPosition += (27 + (3 * sideMargin));
+
+    uploadBtn.setBounds(screenWidth - (sideMargin + 110), yPosition, 110, 24);
 }
