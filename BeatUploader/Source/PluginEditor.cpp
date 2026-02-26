@@ -66,9 +66,15 @@ BeatUploaderAudioProcessorEditor::BeatUploaderAudioProcessorEditor (BeatUploader
     addAndMakeVisible(imageSel);
     imageSel.onClick = [this] { imageClicked(); };
 
-    //// Email entrybox
-    //emailInput.setTextToShowWhenEmpty("Enter email address associated with YouTube channel", textEditorEmptyFg);
-    //addAndMakeVisible(emailInput);
+    // Email entrybox
+    emailInput.setFont(componentFont.withHeight(18.0f));
+    emailInput.setTextToShowWhenEmpty("Email address... (associated with YouTube channel)", textEditorEmptyFg);
+    emailInput.setColour(juce::TextEditor::backgroundColourId, elementBg);
+    emailInput.setColour(juce::TextEditor::textColourId, textEditorFg);
+    emailInput.setColour(juce::TextEditor::highlightColourId, textEditorHighlight);
+    emailInput.setColour(juce::TextEditor::outlineColourId, elementBg);
+    emailInput.setColour(juce::TextEditor::focusedOutlineColourId, textEditorHighlight);
+    addAndMakeVisible(emailInput);
 
     //// Upload button
     //uploadBtn.setButtonText("Upload");
@@ -148,5 +154,7 @@ void BeatUploaderAudioProcessorEditor::resized()
 
     audioSel.setBounds(sideMargin, yPosition, 110, 24);
     imageSel.setBounds(screenWidth - (sideMargin + 110), yPosition, 110, 24);
-    yPosition += (24 + (4 * sideMargin));
+    yPosition += (24 + (2 * sideMargin));
+
+    emailInput.setBounds(sideMargin, yPosition, screenWidth - (2 * sideMargin), 27);
 }
