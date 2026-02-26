@@ -102,6 +102,7 @@ BeatUploaderAudioProcessorEditor::BeatUploaderAudioProcessorEditor (BeatUploader
 BeatUploaderAudioProcessorEditor::~BeatUploaderAudioProcessorEditor()
 {
     audioSel.setLookAndFeel(nullptr);
+    imageSel.setLookAndFeel(nullptr);
 }
 
 void BeatUploaderAudioProcessorEditor::audioClicked()
