@@ -1,3 +1,3 @@
 # BeatUploader
 
-VST3 audio plugin for uploading music on YouTube directly from Your DAW!
+VST audio plugin for uploading music on YouTube directly from Your DAW!
