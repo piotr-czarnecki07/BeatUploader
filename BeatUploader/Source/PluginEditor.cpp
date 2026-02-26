@@ -27,6 +27,10 @@ BeatUploaderAudioProcessorEditor::BeatUploaderAudioProcessorEditor (BeatUploader
     auto componentFontSize = BinaryData::LexendRegular_ttfSize;
     componentFont = juce::Font(juce::Typeface::createSystemTypefaceFor(componentFontData, componentFontSize));
 
+    auto outputFontData = BinaryData::KantumruyProMediumItalic_ttf;
+    auto outputFontSize = BinaryData::KantumruyProMediumItalic_ttfSize;
+    outputFont = juce::Font(juce::Typeface::createSystemTypefaceFor(outputFontData, outputFontSize));
+
     // Song title entrybox
     songTitle.setFont(componentFont.withHeight(18.0f));
     songTitle.setTextToShowWhenEmpty("Song title...", textEditorEmptyFg);
@@ -85,7 +89,12 @@ BeatUploaderAudioProcessorEditor::BeatUploaderAudioProcessorEditor (BeatUploader
     addAndMakeVisible(uploadBtn);
 
     // Output info label
-    //addAndMakeVisible(operationOutput);
+    operationOutput.setFont(outputFont.withHeight(19.0f));
+    operationOutput.setJustificationType(juce::Justification::centred);
+    operationOutput.setColour(juce::Label::backgroundColourId, pluginBg);
+    operationOutput.setColour(juce::Label::textColourId, pluginFg);
+    operationOutput.setColour(juce::Label::outlineColourId, pluginBg);
+    addAndMakeVisible(operationOutput);
 
     setSize(screenWidth, screenHeight);
 }
@@ -108,8 +117,15 @@ void BeatUploaderAudioProcessorEditor::audioClicked()
     audioChooser->launchAsync(chooserFlags, [this](const juce::FileChooser& fc){
         auto file = fc.getResult();
 
-        if (file.existsAsFile())
+        if (file.existsAsFile()) {
             file.loadFileAsData(audioFileData);
+            operationOutput.setColour(juce::Label::textColourId, operationSuccessColor);
+            operationOutput.setText("Audio uploaded", juce::NotificationType::dontSendNotification);
+        }
+        else {
+            operationOutput.setColour(juce::Label::textColourId, operationFailColor);
+            operationOutput.setText("Audio was not uploaded", juce::NotificationType::dontSendNotification);
+        }
     });
 }
 
@@ -126,8 +142,15 @@ void BeatUploaderAudioProcessorEditor::imageClicked()
     imageChooser->launchAsync(chooserFlags, [this](const juce::FileChooser& fc) {
         auto file = fc.getResult();
 
-        if (file.existsAsFile())
+        if (file.existsAsFile()) {
             file.loadFileAsData(imageFileData);
+            operationOutput.setColour(juce::Label::textColourId, operationSuccessColor);
+            operationOutput.setText("Image uploaded", juce::NotificationType::dontSendNotification);
+        }
+        else {
+            operationOutput.setColour(juce::Label::textColourId, operationFailColor);
+            operationOutput.setText("Image was not uploaded", juce::NotificationType::dontSendNotification);
+        }
     });
 }
 
@@ -163,10 +186,11 @@ void BeatUploaderAudioProcessorEditor::resized()
 
     audioSel.setBounds(sideMargin, yPosition, 110, 24);
     imageSel.setBounds(screenWidth - (sideMargin + 110), yPosition, 110, 24);
-    yPosition += (24 + (2 * sideMargin));
+    yPosition += (24 + sideMargin);
 
     emailInput.setBounds(sideMargin, yPosition, screenWidth - (2 * sideMargin), 27);
-    yPosition += (27 + (3 * sideMargin));
 
-    uploadBtn.setBounds(screenWidth - (sideMargin + 110), yPosition, 110, 24);
+    uploadBtn.setBounds(screenWidth - (sideMargin + 110), screenHeight - (32 + elementMargin + 24), 110, 24);
+
+    operationOutput.setBounds(sideMargin, screenHeight - 32, screenWidth - (2 * sideMargin), 32);
 }

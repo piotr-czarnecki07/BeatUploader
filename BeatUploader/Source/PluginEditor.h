@@ -30,13 +30,14 @@ private:
 
     // Constants
     int const screenWidth = 375;
-    int const screenHeight = 575;
+    int const screenHeight = 550;
     int const sideMargin = 25;
     int const elementMargin = 10;
 
     // Custom fonts
     juce::Font titleFont;
     juce::Font componentFont;
+    juce::Font outputFont;
 
     // Graifc components
     juce::TextEditor songTitle; // enter song title
@@ -83,6 +84,9 @@ private:
     juce::Colour const textEditorHighlight = juce::Colour::fromString("b52874ed");
 
     juce::Colour const buttonFg = juce::Colour::fromString("fefafafa");
+
+    juce::Colour const operationSuccessColor = juce::Colour::fromString("fd1de03e");
+    juce::Colour const operationFailColor = juce::Colour::fromString("fde32619");
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BeatUploaderAudioProcessorEditor)
 };
