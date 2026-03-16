@@ -66,19 +66,19 @@ BeatUploaderAudioProcessorEditor::BeatUploaderAudioProcessorEditor (BeatUploader
     imageSel.setColour(juce::TextButton::buttonColourId, elementBg);
     imageSel.setColour(juce::TextButton::textColourOffId, buttonFg);
     imageSel.setLookAndFeel(&buttonLookAndFeel);
-    imageSel.setButtonText("Choose image");
+    imageSel.setButtonText("Choose cover");
     imageSel.onClick = [this] { imageClicked(); };
     addAndMakeVisible(imageSel);
 
     // Email entrybox
-    emailInput.setFont(componentFont.withHeight(18.0f));
+    /*emailInput.setFont(componentFont.withHeight(18.0f));
     emailInput.setTextToShowWhenEmpty("Email address... (associated with YouTube channel)", textEditorEmptyFg);
     emailInput.setColour(juce::TextEditor::backgroundColourId, elementBg);
     emailInput.setColour(juce::TextEditor::textColourId, textEditorFg);
     emailInput.setColour(juce::TextEditor::highlightColourId, textEditorHighlight);
     emailInput.setColour(juce::TextEditor::outlineColourId, elementBg);
     emailInput.setColour(juce::TextEditor::focusedOutlineColourId, textEditorHighlight);
-    addAndMakeVisible(emailInput);
+    addAndMakeVisible(emailInput);*/
 
     // Upload button
     uploadBtn.setColour(juce::TextButton::buttonColourId, elementBg);
@@ -146,17 +146,47 @@ void BeatUploaderAudioProcessorEditor::imageClicked()
         if (file.existsAsFile()) {
             file.loadFileAsData(imageFileData);
             operationOutput.setColour(juce::Label::textColourId, operationSuccessColor);
-            operationOutput.setText("Image uploaded", juce::NotificationType::dontSendNotification);
+            operationOutput.setText("Cover uploaded", juce::NotificationType::dontSendNotification);
         }
         else {
             operationOutput.setColour(juce::Label::textColourId, operationFailColor);
-            operationOutput.setText("Image was not uploaded", juce::NotificationType::dontSendNotification);
+            operationOutput.setText("Cover was not uploaded", juce::NotificationType::dontSendNotification);
         }
     });
 }
 
+// check user input and sent oauth request
 void BeatUploaderAudioProcessorEditor::uploadClicked()
 {
+    operationOutput.setColour(juce::Label::textColourId, operationFailColor); // set color to fail in case any condition below is true
+
+    // check title
+    if (songTitle.getText().length() == 0) {
+        operationOutput.setText("Title cannot be empty", juce::NotificationType::sendNotification);
+        return;
+    }
+    if (songTitle.getText().length() > 100) {
+        operationOutput.setText("Title can't be longer than 100 chars", juce::NotificationType::sendNotification);
+        return;
+    }
+
+    // check description
+    if (songDesc.getText().length() > 5000) {
+        operationOutput.setText("Desc. can't be longer than 5000 chars", juce::NotificationType::sendNotification);
+        return;
+    }
+
+    // check audio & image
+    if (audioFileData.getSize() == 0) {
+        operationOutput.setText("Audio was not provided", juce::NotificationType::sendNotification);
+        return;
+    }
+    if (imageFileData.getSize() == 0) {
+        operationOutput.setText("Cover was not provided", juce::NotificationType::sendNotification);
+        return;
+    }
+
+    // begin oauth
 
 }
 
@@ -187,9 +217,9 @@ void BeatUploaderAudioProcessorEditor::resized()
 
     audioSel.setBounds(sideMargin, yPosition, 110, 24);
     imageSel.setBounds(screenWidth - (sideMargin + 110), yPosition, 110, 24);
-    yPosition += (24 + sideMargin);
+    //yPosition += (24 + sideMargin);
 
-    emailInput.setBounds(sideMargin, yPosition, screenWidth - (2 * sideMargin), 27);
+    //emailInput.setBounds(sideMargin, yPosition, screenWidth - (2 * sideMargin), 27);
 
     uploadBtn.setBounds(screenWidth - (sideMargin + 110), screenHeight - (32 + elementMargin + 24), 110, 24);
 
