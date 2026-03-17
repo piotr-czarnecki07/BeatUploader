@@ -9,7 +9,6 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
-//==============================================================================
 BeatUploaderAudioProcessor::BeatUploaderAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
      : AudioProcessor (BusesProperties()
@@ -28,7 +27,6 @@ BeatUploaderAudioProcessor::~BeatUploaderAudioProcessor()
 {
 }
 
-//==============================================================================
 const juce::String BeatUploaderAudioProcessor::getName() const
 {
     return JucePlugin_Name;
@@ -90,7 +88,6 @@ void BeatUploaderAudioProcessor::changeProgramName (int index, const juce::Strin
 {
 }
 
-//==============================================================================
 void BeatUploaderAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     // Use this method as the place to do any pre-playback
@@ -158,7 +155,6 @@ void BeatUploaderAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     }
 }
 
-//==============================================================================
 bool BeatUploaderAudioProcessor::hasEditor() const
 {
     return true; // (change this to false if you choose to not supply an editor)
@@ -169,7 +165,6 @@ juce::AudioProcessorEditor* BeatUploaderAudioProcessor::createEditor()
     return new BeatUploaderAudioProcessorEditor (*this);
 }
 
-//==============================================================================
 void BeatUploaderAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 {
     // You should use this method to store your parameters in the memory block.
@@ -183,9 +178,34 @@ void BeatUploaderAudioProcessor::setStateInformation (const void* data, int size
     // whose contents will have been created by the getStateInformation() call.
 }
 
-//==============================================================================
 // This creates new instances of the plugin..
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new BeatUploaderAudioProcessor();
+}
+
+void BeatUploaderAudioProcessor::startUpload(const juce::String& title,
+                                             const juce::String& desc,
+                                             const juce::MemoryBlock& audio,
+                                             const juce::MemoryBlock& image)
+{
+    if (oauthThread != nullptr) {
+        oauthThread->stopThread(2000);
+        oauthThread.reset();
+    }
+
+    juce::String clientId = "666993375983-simteqq6ufsp23fsmnern1k1kb4v6oam.apps.googleusercontent.com";
+    juce::String redirectUri = "http://127.0.0.1:8080/"; // address, on which the listener thread will wait for Google response (NOT backend server host)
+    juce::String scope = "https://www.googleapis.com/auth/youtube.upload";
+
+    oauthThread = std::make_unique<OAuthListenerThread>(clientId, title, desc, audio, image);
+    oauthThread->startThread();
+
+    juce::URL authUrl("https://accounts.google.com/o/oauth2/v2/auth");
+    authUrl = authUrl.withParameter("client_id", clientId)
+        .withParameter("redirect_uri", redirectUri)
+        .withParameter("response_type", "code")
+        .withParameter("scope", scope);
+
+    authUrl.launchInDefaultBrowser();
 }

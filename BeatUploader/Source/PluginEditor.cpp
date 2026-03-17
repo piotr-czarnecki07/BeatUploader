@@ -133,9 +133,9 @@ void BeatUploaderAudioProcessorEditor::audioClicked()
 void BeatUploaderAudioProcessorEditor::imageClicked()
 {
     imageChooser = std::make_unique<juce::FileChooser>(
-        "Choose image/gif file",
+        "Choose image file",
         juce::File::getSpecialLocation(juce::File::userDocumentsDirectory),
-        "*.png;*.jpg;*.gif"
+        "*.png;*.jpg"
     );
 
     auto chooserFlags = juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles;
@@ -162,32 +162,38 @@ void BeatUploaderAudioProcessorEditor::uploadClicked()
 
     // check title
     if (songTitle.getText().length() == 0) {
-        operationOutput.setText("Title cannot be empty", juce::NotificationType::sendNotification);
+        operationOutput.setText("Title cannot be empty", juce::NotificationType::dontSendNotification);
         return;
     }
     if (songTitle.getText().length() > 100) {
-        operationOutput.setText("Title can't be longer than 100 chars", juce::NotificationType::sendNotification);
+        operationOutput.setText("Title can't be longer than 100 chars", juce::NotificationType::dontSendNotification);
         return;
     }
 
     // check description
     if (songDesc.getText().length() > 5000) {
-        operationOutput.setText("Desc. can't be longer than 5000 chars", juce::NotificationType::sendNotification);
+        operationOutput.setText("Desc. can't be longer than 5000 chars", juce::NotificationType::dontSendNotification);
         return;
     }
 
     // check audio & image
     if (audioFileData.getSize() == 0) {
-        operationOutput.setText("Audio was not provided", juce::NotificationType::sendNotification);
+        operationOutput.setText("Audio was not provided", juce::NotificationType::dontSendNotification);
         return;
     }
     if (imageFileData.getSize() == 0) {
-        operationOutput.setText("Cover was not provided", juce::NotificationType::sendNotification);
+        operationOutput.setText("Cover was not provided", juce::NotificationType::dontSendNotification);
         return;
     }
 
     // begin oauth
+    juce::String title = songTitle.getText();
+    juce::String desc = songDesc.getText();
 
+    operationOutput.setColour(juce::Label::ColourIds::textColourId, pluginFg);
+    operationOutput.setText("Opening browser...", juce::NotificationType::dontSendNotification);
+
+    audioProcessor.startUpload(title, desc, audioFileData, imageFileData);
 }
 
 void BeatUploaderAudioProcessorEditor::paint(juce::Graphics& g)
