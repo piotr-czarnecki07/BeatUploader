@@ -1,0 +1,97 @@
+#include <JuceHeader.h>
+
+#pragma once
+
+class OAuthListenerThread : public juce::Thread
+{
+public:
+    OAuthListenerThread(juce::String clientId, juce::String title, juce::String desc, juce::MemoryBlock audio, juce::MemoryBlock image)
+        : juce::Thread("OAuthListener"),
+          googleClientId(clientId),
+          songTitle(title),
+          songDesc(desc),
+          audioData(audio),
+          imageData(image) {}
+
+    void run() override
+    {
+        juce::StreamingSocket serverSocket;
+        int port = 8080;
+
+        while (!threadShouldExit()) {
+            if (serverSocket.createListener(port, "127.0.0.1")) {
+                std::unique_ptr<juce::StreamingSocket> clientSocket(serverSocket.waitForNextConnection());
+
+                if (clientSocket != nullptr && !threadShouldExit()) {
+                    char buffer[2048] = { 0 };
+                    clientSocket->read(buffer, sizeof(buffer), false);
+
+                    juce::String request(buffer);
+
+                    juce::String authCode = extractCodeFromRequest(request);
+
+                    if (authCode.isNotEmpty()) {
+                        sendHttpResponse(clientSocket.get(), "Your video is being processed now\nYou can close this window", "Success");
+
+                        // sendData(authCode);
+                    }
+                    else {
+                        sendHttpResponse(clientSocket.get(), "Authorization faild\nPlease try again", "Fail");
+                    }
+
+                    signalThreadShouldExit();
+                }
+            }
+        }
+    }
+
+private:
+    juce::String googleClientId;
+    juce::String songTitle;
+    juce::String songDesc;
+    juce::MemoryBlock audioData;
+    juce::MemoryBlock imageData;
+
+    juce::String extractCodeFromRequest(const juce::String& request)
+    {
+        int codeIndex = request.indexOf("code=");
+        if (codeIndex != -1) {
+            int endIndex = request.indexOfChar(codeIndex, '&');
+            if (endIndex == -1) endIndex = request.indexOfChar(codeIndex, ' ');
+            
+            if (endIndex != -1)
+                return request.substring(codeIndex + 5, endIndex);
+        }
+        return {};
+    }
+
+    void sendHttpResponse(juce::StreamingSocket* socket, const juce::String responseMessage, const juce::String responseTitle)
+    {
+        juce::String header = "HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\n\r\n";
+
+        juce::String htmlBody = R"html(
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>)html" + responseTitle + R"html(</title>
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700&family=Michroma&display=swap" rel="stylesheet">
+        </head>
+        <body style="text-align: center; margin-top: 20px; background-color: #1e1e1e;">
+            <div style="font-family: 'Michroma', sans-serif; font-weight: 400; font-style: normal; color: #ececec; font-size: 32px;">BeatUploader</div>
+            <div style="margin-top: 30px; font-family: 'Lexend', sans-serif; font-optical-sizing: auto; font-weight: normal; font-style: normal; color: #e9e9e9; font-size: 14px;">)html" + responseMessage + R"html(</div>
+        </body>
+        </html>
+        )html";
+
+        juce::String fullResponse = header + htmlBody;
+        socket->write(fullResponse.toRawUTF8(), fullResponse.getNumBytesAsUTF8());
+    }
+
+    void sendData(const juce::String& authCode)
+    {
+        
+    }
+};
