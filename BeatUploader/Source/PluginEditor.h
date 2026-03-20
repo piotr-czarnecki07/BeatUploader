@@ -66,8 +66,6 @@ private:
 
     buttonFont buttonLookAndFeel{ componentFont };
 
-    //juce::TextEditor emailInput;
-
     juce::TextButton uploadBtn;
     void uploadClicked();
 

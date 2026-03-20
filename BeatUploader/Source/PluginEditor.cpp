@@ -70,16 +70,6 @@ BeatUploaderAudioProcessorEditor::BeatUploaderAudioProcessorEditor (BeatUploader
     imageSel.onClick = [this] { imageClicked(); };
     addAndMakeVisible(imageSel);
 
-    // Email entrybox
-    /*emailInput.setFont(componentFont.withHeight(18.0f));
-    emailInput.setTextToShowWhenEmpty("Email address... (associated with YouTube channel)", textEditorEmptyFg);
-    emailInput.setColour(juce::TextEditor::backgroundColourId, elementBg);
-    emailInput.setColour(juce::TextEditor::textColourId, textEditorFg);
-    emailInput.setColour(juce::TextEditor::highlightColourId, textEditorHighlight);
-    emailInput.setColour(juce::TextEditor::outlineColourId, elementBg);
-    emailInput.setColour(juce::TextEditor::focusedOutlineColourId, textEditorHighlight);
-    addAndMakeVisible(emailInput);*/
-
     // Upload button
     uploadBtn.setColour(juce::TextButton::buttonColourId, elementBg);
     uploadBtn.setColour(juce::TextButton::textColourOffId, buttonFg);
