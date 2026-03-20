@@ -5,4 +5,15 @@
 /BeatUploader/JuceLibraryCode
 /BeatUploader/BeatUploader.jucer
 
+# sketches
 /demo/
+
+# BACKEND
+
+# enviroment
+/Backend/env/
+/Backend/BeatUploaderAPI/.env
+
+# auto generated
+**/__pycache__/**
+*.sqlite3

@@ -5,6 +5,7 @@
 class OAuthListenerThread : public juce::Thread
 {
 public:
+    // construct values from parameters
     OAuthListenerThread(juce::String clientId, juce::String title, juce::String desc, juce::MemoryBlock audio, juce::MemoryBlock image)
         : juce::Thread("OAuthListener"),
           googleClientId(clientId),
@@ -13,27 +14,29 @@ public:
           audioData(audio),
           imageData(image) {}
 
+    // function running in subthread
     void run() override
     {
         juce::StreamingSocket serverSocket;
         int port = 8080;
 
+        // wait from response from https://accounts.google.com/o/oauth2/v2/auth
         while (!threadShouldExit()) {
+            // bind listening server with host and port
             if (serverSocket.createListener(port, "127.0.0.1")) {
                 std::unique_ptr<juce::StreamingSocket> clientSocket(serverSocket.waitForNextConnection());
 
-                if (clientSocket != nullptr && !threadShouldExit()) {
+                if (clientSocket != nullptr && !threadShouldExit()) { // when response is send
                     char buffer[2048] = { 0 };
                     clientSocket->read(buffer, sizeof(buffer), false);
 
-                    juce::String request(buffer);
+                    juce::String request(buffer); // read response
 
-                    juce::String authCode = extractCodeFromRequest(request);
+                    juce::String authCode = extractCodeFromRequest(request); // extract auth_code
 
                     if (authCode.isNotEmpty()) {
-                        sendHttpResponse(clientSocket.get(), "Your video is being processed now\nYou can close this window", "Success");
-
-                        // sendData(authCode);
+                        sendHttpResponse(clientSocket.get(), "Your video is being processed now\nYou can close this window", "Success"); // inform browser
+                        sendDataToProcess(authCode); // send user data and auth_code to backend
                     }
                     else {
                         sendHttpResponse(clientSocket.get(), "Authorization faild\nPlease try again", "Fail");
@@ -90,8 +93,34 @@ private:
         socket->write(fullResponse.toRawUTF8(), fullResponse.getNumBytesAsUTF8());
     }
 
-    void sendData(const juce::String& authCode)
+    void sendDataToProcess(const juce::String& authCode)
     {
-        
+        juce::URL backendUrl("http://127.0.0.1:5500/api/videos"); // backend server URI
+
+        backendUrl = backendUrl.withParameter("auth_code", authCode) // add text data and auth code to request
+            .withParameter("title", songTitle)
+            .withParameter("desc", songDesc);
+
+        // convert MemoryBlocks to temporary files
+        juce::File tempAudio = juce::File::getSpecialLocation(juce::File::tempDirectory).getChildFile("temp_audio.wav");
+        tempAudio.replaceWithData(audioData.getData(), audioData.getSize());
+
+        juce::File tempImage = juce::File::getSpecialLocation(juce::File::tempDirectory).getChildFile("temp_image.png");
+        tempImage.replaceWithData(imageData.getData(), imageData.getSize());
+
+        // add these files to request
+        backendUrl = backendUrl.withFileToUpload("audio_file", tempAudio, "audio/wav")
+            .withFileToUpload("image_file", tempImage, "image/png");
+
+        // make request
+        juce::URL::InputStreamOptions options(juce::URL::ParameterHandling::inPostData);
+        std::unique_ptr<juce::InputStream> stream(backendUrl.createInputStream(options));
+
+        if (stream != nullptr) {
+            juce::String response = stream->readEntireStreamAsString();
+        }
+
+        tempAudio.deleteFile();
+        tempImage.deleteFile();
     }
 };
