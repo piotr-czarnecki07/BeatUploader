@@ -5,7 +5,6 @@
 class OAuthListenerThread : public juce::Thread
 {
 public:
-    // construct values from parameters
     OAuthListenerThread(juce::String clientId, juce::String title, juce::String desc, juce::MemoryBlock audio, juce::MemoryBlock image)
         : juce::Thread("OAuthListener"),
           googleClientId(clientId),
@@ -14,38 +13,44 @@ public:
           audioData(audio),
           imageData(image) {}
 
-    // function running in subthread
     void run() override
     {
         juce::StreamingSocket serverSocket;
         int port = 8080;
 
-        // wait from response from https://accounts.google.com/o/oauth2/v2/auth
+        // if 127.0.0.1:8080 is occupied
+        if (!serverSocket.createListener(port, "127.0.0.1")) {
+            return;
+        }
+
+        // wait for response from Google Authorization Server
         while (!threadShouldExit()) {
-            // bind listening server with host and port
-            if (serverSocket.createListener(port, "127.0.0.1")) {
-                std::unique_ptr<juce::StreamingSocket> clientSocket(serverSocket.waitForNextConnection());
+            std::unique_ptr<juce::StreamingSocket> clientSocket(serverSocket.waitForNextConnection());
 
-                if (clientSocket != nullptr && !threadShouldExit()) { // when response is send
-                    char buffer[2048] = { 0 };
-                    clientSocket->read(buffer, sizeof(buffer), false);
+            // response has been sent
+            if (clientSocket != nullptr) {
+                char buffer[2048] = { 0 };
+                clientSocket->read(buffer, sizeof(buffer), false);
 
-                    juce::String request(buffer); // read response
+                juce::String request(buffer);
+                juce::String authCode = extractCodeFromRequest(request);
 
-                    juce::String authCode = extractCodeFromRequest(request); // extract auth_code
-
-                    if (authCode.isNotEmpty()) {
-                        sendHttpResponse(clientSocket.get(), "Your video is being processed now\nYou can close this window", "Success"); // inform browser
-                        sendDataToProcess(authCode); // send user data and auth_code to backend
-                    }
-                    else {
-                        sendHttpResponse(clientSocket.get(), "Authorization faild\nPlease try again", "Fail");
-                    }
-
-                    signalThreadShouldExit();
+                if (authCode.isNotEmpty()) {
+                    sendHttpResponse(clientSocket.get(), "Your video is being processed now\nYou can close this window", "Success"); // inform browser
+                    //sendDataToProcess(authCode); // send user data and auth_code to backend
                 }
+                else {
+                    sendHttpResponse(clientSocket.get(), "Authorization faild\nPlease try again or choose different account", "Fail");
+                }
+
+                // slight delay to not end the connection too early
+                juce::Thread::sleep(200);
+
+                signalThreadShouldExit();
             }
         }
+
+        serverSocket.close();
     }
 
 private:
