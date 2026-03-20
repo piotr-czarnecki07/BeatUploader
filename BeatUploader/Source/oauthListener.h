@@ -36,11 +36,11 @@ public:
                 juce::String authCode = extractCodeFromRequest(request);
 
                 if (authCode.isNotEmpty()) {
-                    sendHttpResponse(clientSocket.get(), "Your video is being processed now\nYou can close this window", "Success"); // inform browser
+                    sendHttpResponse(clientSocket.get(), "Your video is being processed now<br>You can close this window", "Success"); // inform browser
                     //sendDataToProcess(authCode); // send user data and auth_code to backend
                 }
                 else {
-                    sendHttpResponse(clientSocket.get(), "Authorization faild\nPlease try again or choose different account", "Fail");
+                    sendHttpResponse(clientSocket.get(), "Authorization faild<br>Please try again or choose different account", "Fail");
                 }
 
                 // slight delay to not end the connection too early
