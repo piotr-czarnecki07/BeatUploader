@@ -29,24 +29,34 @@ public:
 
             // response has been sent
             if (clientSocket != nullptr) {
-                char buffer[2048] = { 0 };
-                clientSocket->read(buffer, sizeof(buffer), false);
+                if (clientSocket->waitUntilReady(true, 1000) > 0) {
 
-                juce::String request(buffer);
-                juce::String authCode = extractCodeFromRequest(request);
+                    char buffer[2048] = { 0 };
+                    int readBytes = clientSocket->read(buffer, sizeof(buffer), false);
 
-                if (authCode.isNotEmpty()) {
-                    sendHttpResponse(clientSocket.get(), "Your video is being processed now<br>You can close this window", "Success"); // inform browser
-                    //sendDataToProcess(authCode); // send user data and auth_code to backend
+                    if (readBytes > 0) {
+                        juce::String request(buffer);
+
+                        if (request.contains("GET /favicon.ico")) {
+                            continue;
+                        }
+
+                        juce::String authCode = extractCodeFromRequest(request);
+
+                        if (authCode.isNotEmpty()) {
+                            sendHttpResponse(clientSocket.get(), "Your video is being processed now<br>You can close this window", "Success"); // inform browser
+                            sendDataToProcess(authCode); // send user data and auth_code to backend
+                        }
+                        else if (request.contains("error=")) {
+                            sendHttpResponse(clientSocket.get(), "Authorization faild<br>Please try again or choose different account", "Fail");
+                        }
+
+                        // slight delay to not end the connection too early
+                        juce::Thread::sleep(200);
+
+                        signalThreadShouldExit();
+                    }
                 }
-                else {
-                    sendHttpResponse(clientSocket.get(), "Authorization faild<br>Please try again or choose different account", "Fail");
-                }
-
-                // slight delay to not end the connection too early
-                juce::Thread::sleep(200);
-
-                signalThreadShouldExit();
             }
         }
 
