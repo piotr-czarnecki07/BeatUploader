@@ -110,7 +110,7 @@ private:
 
     void sendDataToProcess(const juce::String& authCode)
     {
-        juce::URL backendUrl("http://127.0.0.1:5500/api/videos"); // backend server URI
+        juce::URL backendUrl("http://127.0.0.1:5500/api/videos/"); // backend server URI
 
         backendUrl = backendUrl.withParameter("auth_code", authCode) // add text data and auth code to request
             .withParameter("title", songTitle)
