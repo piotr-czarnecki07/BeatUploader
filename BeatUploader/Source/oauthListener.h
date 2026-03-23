@@ -1,6 +1,6 @@
-#include <JuceHeader.h>
-
 #pragma once
+
+#include <JuceHeader.h>
 
 class OAuthListenerThread : public juce::Thread
 {
@@ -131,9 +131,9 @@ private:
         juce::URL::InputStreamOptions options(juce::URL::ParameterHandling::inPostData);
         std::unique_ptr<juce::InputStream> stream(backendUrl.createInputStream(options));
 
-        if (stream != nullptr) {
+        /*if (stream != nullptr) {
             juce::String response = stream->readEntireStreamAsString();
-        }
+        }*/
 
         tempAudio.deleteFile();
         tempImage.deleteFile();
