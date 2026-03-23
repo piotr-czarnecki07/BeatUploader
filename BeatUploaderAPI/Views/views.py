@@ -5,14 +5,14 @@ from rest_framework import status as s
 @api_view(['POST'])
 def videos(request):
     if request.method == "POST":
-        title = request.data['title']
-        desc = request.data['desc']
-        auth_code = request.data['auth_code']
+        title = request.data.get('title')
+        desc = request.data.get('desc') # can be empty (None or empty string)
+        auth_code = request.data.get('auth_code')
 
-        image = request.data['image_file']
-        audio = request.data['audio_file']
+        image_file = request.FILES.get('image_file')
+        audio_file = request.FILES.get('audio_file')
 
-        with open('test.txt') as f:
-            f.write(f'title: {title}\ndesc: {desc}\nauth_code: {auth_code}\nimage: {image}\naudio: {audio}')
+        if None in (title, auth_code, image_file, audio_file):
+            return Response({'error': '"title", "auth_code", "image_file" or "audio_file" parameter is missing'}, s.HTTP_400_BAD_REQUEST)
 
         return Response(status=s.HTTP_200_OK)
