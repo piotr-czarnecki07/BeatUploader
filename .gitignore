@@ -11,8 +11,8 @@
 # BACKEND
 
 # enviroment
-/Backend/env/
-/Backend/BeatUploaderAPI/.env
+/env/
+/BeatUploaderAPI/.env
 
 # auto generated
 **/__pycache__/**
