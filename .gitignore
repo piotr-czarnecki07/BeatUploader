@@ -1,9 +1,9 @@
 # FRONTEND
 
 # auto generated
-/BeatUploader/Builds
-/BeatUploader/JuceLibraryCode
-/BeatUploader/BeatUploader.jucer
+BeatUploader/Builds
+BeatUploader/JuceLibraryCode
+BeatUploader/BeatUploader.jucer
 
 # sketches
 /demo/
@@ -13,9 +13,14 @@
 # BACKEND
 
 # enviroment
-/env/
-/BeatUploaderAPI/.env
+Backend/env/
+Backend/BeatUploaderAPI/.env
 
 # auto generated
 **/__pycache__/**
 *.sqlite3
+
+
+# VS CODE
+
+**.vscode
