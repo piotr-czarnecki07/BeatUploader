@@ -47,8 +47,7 @@ public:
 
     void startUpload(const juce::String& title,
         const juce::String& desc,
-        const juce::MemoryBlock& audio,
-        const juce::MemoryBlock& image);
+        const juce::MemoryBlock& video);
 
 private:
     std::unique_ptr<OAuthListenerThread> oauthThread;

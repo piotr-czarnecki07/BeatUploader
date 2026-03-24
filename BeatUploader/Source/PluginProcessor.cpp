@@ -186,8 +186,7 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 
 void BeatUploaderAudioProcessor::startUpload(const juce::String& title,
                                              const juce::String& desc,
-                                             const juce::MemoryBlock& audio,
-                                             const juce::MemoryBlock& image)
+                                             const juce::MemoryBlock& video)
 {
     if (oauthThread != nullptr) {
         oauthThread->stopThread(2000);
@@ -198,7 +197,7 @@ void BeatUploaderAudioProcessor::startUpload(const juce::String& title,
     juce::String redirectUri = "http://127.0.0.1:8080/"; // address, on which the listener thread will wait for Google response (NOT backend server host)
     juce::String scope = "https://www.googleapis.com/auth/youtube.upload";
 
-    oauthThread = std::make_unique<OAuthListenerThread>(clientId, title, desc, audio, image);
+    oauthThread = std::make_unique<OAuthListenerThread>(clientId, title, desc, video);
     oauthThread->startThread();
 
     juce::URL authUrl("https://accounts.google.com/o/oauth2/v2/auth");

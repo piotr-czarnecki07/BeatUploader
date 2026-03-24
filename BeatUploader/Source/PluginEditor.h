@@ -43,15 +43,10 @@ private:
     juce::TextEditor songTitle; // enter song title
     juce::TextEditor songDesc; // enter song description
 
-    juce::TextButton audioSel; // audio file dialog
-    std::unique_ptr<juce::FileChooser> audioChooser;
-    juce::MemoryBlock audioFileData;
-    void audioClicked();
-
-    juce::TextButton imageSel; // image file dialog
-    std::unique_ptr<juce::FileChooser> imageChooser;
-    juce::MemoryBlock imageFileData;
-    void imageClicked();
+    juce::TextButton videoSel; // video file dialog
+    std::unique_ptr<juce::FileChooser> videoChooser;
+    juce::MemoryBlock videoFileData;
+    void videoClicked();
 
     struct buttonFont : public juce::LookAndFeel_V4 { // look and feel structure for textbuttons custom font
         buttonFont(juce::Font f) : fontToUse(f) {}

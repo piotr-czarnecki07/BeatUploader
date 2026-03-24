@@ -5,13 +5,12 @@
 class OAuthListenerThread : public juce::Thread
 {
 public:
-    OAuthListenerThread(juce::String clientId, juce::String title, juce::String desc, juce::MemoryBlock audio, juce::MemoryBlock image)
+    OAuthListenerThread(juce::String clientId, juce::String title, juce::String desc, juce::MemoryBlock video)
         : juce::Thread("OAuthListener"),
           googleClientId(clientId),
           songTitle(title),
           songDesc(desc),
-          audioData(audio),
-          imageData(image) {}
+          videoData(video) {}
 
     void run() override
     {
@@ -67,8 +66,7 @@ private:
     juce::String googleClientId;
     juce::String songTitle;
     juce::String songDesc;
-    juce::MemoryBlock audioData;
-    juce::MemoryBlock imageData;
+    juce::MemoryBlock videoData;
 
     juce::String extractCodeFromRequest(const juce::String& request)
     {
@@ -116,16 +114,12 @@ private:
             .withParameter("title", songTitle)
             .withParameter("desc", songDesc);
 
-        // convert MemoryBlocks to temporary files
-        juce::File tempAudio = juce::File::getSpecialLocation(juce::File::tempDirectory).getChildFile("temp_audio.wav");
-        tempAudio.replaceWithData(audioData.getData(), audioData.getSize());
-
-        juce::File tempImage = juce::File::getSpecialLocation(juce::File::tempDirectory).getChildFile("temp_image.png");
-        tempImage.replaceWithData(imageData.getData(), imageData.getSize());
+        // convert video Memoryblock to temporary files
+        juce::File tempVideo = juce::File::getSpecialLocation(juce::File::tempDirectory).getChildFile("temp_video.mp4");
+        tempVideo.replaceWithData(videoData.getData(), videoData.getSize());
 
         // add these files to request
-        backendUrl = backendUrl.withFileToUpload("audio_file", tempAudio, "audio/wav")
-            .withFileToUpload("image_file", tempImage, "image/png");
+        backendUrl = backendUrl.withFileToUpload("video_file", tempVideo, "video/mp4");
 
         // make request
         juce::URL::InputStreamOptions options(juce::URL::ParameterHandling::inPostData);
@@ -135,7 +129,6 @@ private:
             juce::String response = stream->readEntireStreamAsString();
         }*/
 
-        tempAudio.deleteFile();
-        tempImage.deleteFile();
+        tempVideo.deleteFile();
     }
 };

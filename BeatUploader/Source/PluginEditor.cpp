@@ -54,21 +54,13 @@ BeatUploaderAudioProcessorEditor::BeatUploaderAudioProcessorEditor (BeatUploader
     songDesc.setScrollbarsShown(true);
     addAndMakeVisible(songDesc);
 
-    // Audio chooser
-    audioSel.setColour(juce::TextButton::buttonColourId, elementBg);
-    audioSel.setColour(juce::TextButton::textColourOffId, buttonFg);
-    audioSel.setLookAndFeel(&buttonLookAndFeel);
-    audioSel.setButtonText("Choose audio");
-    audioSel.onClick = [this] { audioClicked(); };
-    addAndMakeVisible(audioSel);
-
-    // Image chooser button
-    imageSel.setColour(juce::TextButton::buttonColourId, elementBg);
-    imageSel.setColour(juce::TextButton::textColourOffId, buttonFg);
-    imageSel.setLookAndFeel(&buttonLookAndFeel);
-    imageSel.setButtonText("Choose cover");
-    imageSel.onClick = [this] { imageClicked(); };
-    addAndMakeVisible(imageSel);
+    // Video chooser
+    videoSel.setColour(juce::TextButton::buttonColourId, elementBg);
+    videoSel.setColour(juce::TextButton::textColourOffId, buttonFg);
+    videoSel.setLookAndFeel(&buttonLookAndFeel);
+    videoSel.setButtonText("Choose video");
+    videoSel.onClick = [this] { videoClicked(); };
+    addAndMakeVisible(videoSel);
 
     // Upload button
     uploadBtn.setColour(juce::TextButton::buttonColourId, elementBg);
@@ -91,56 +83,30 @@ BeatUploaderAudioProcessorEditor::BeatUploaderAudioProcessorEditor (BeatUploader
 
 BeatUploaderAudioProcessorEditor::~BeatUploaderAudioProcessorEditor()
 {
-    audioSel.setLookAndFeel(nullptr);
-    imageSel.setLookAndFeel(nullptr);
+    videoSel.setLookAndFeel(nullptr);
 }
 
-void BeatUploaderAudioProcessorEditor::audioClicked()
+void BeatUploaderAudioProcessorEditor::videoClicked()
 {
-    audioChooser = std::make_unique<juce::FileChooser>(
-        "Choose audio file",
-        juce::File::getSpecialLocation(juce::File::userDocumentsDirectory),
-        "*.wav;*.mp3;*.flac;*.ogg"
+    videoChooser = std::make_unique<juce::FileChooser>(
+        "Choose video",
+        juce::File::getSpecialLocation(juce::File::userDesktopDirectory),
+        "*.mov;*.mp4;*.avi"
     );
 
     auto chooserFlags = juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles;
 
-    audioChooser->launchAsync(chooserFlags, [this](const juce::FileChooser& fc){
+    videoChooser->launchAsync(chooserFlags, [this](const juce::FileChooser& fc){
         auto file = fc.getResult();
 
         if (file.existsAsFile()) {
-            file.loadFileAsData(audioFileData);
+            file.loadFileAsData(videoFileData);
             operationOutput.setColour(juce::Label::textColourId, operationSuccessColor);
-            operationOutput.setText("Audio uploaded", juce::NotificationType::dontSendNotification);
+            operationOutput.setText("Video uploaded", juce::NotificationType::dontSendNotification);
         }
         else {
             operationOutput.setColour(juce::Label::textColourId, operationFailColor);
-            operationOutput.setText("Audio was not uploaded", juce::NotificationType::dontSendNotification);
-        }
-    });
-}
-
-void BeatUploaderAudioProcessorEditor::imageClicked()
-{
-    imageChooser = std::make_unique<juce::FileChooser>(
-        "Choose image file",
-        juce::File::getSpecialLocation(juce::File::userDocumentsDirectory),
-        "*.png;*.jpg"
-    );
-
-    auto chooserFlags = juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles;
-
-    imageChooser->launchAsync(chooserFlags, [this](const juce::FileChooser& fc) {
-        auto file = fc.getResult();
-
-        if (file.existsAsFile()) {
-            file.loadFileAsData(imageFileData);
-            operationOutput.setColour(juce::Label::textColourId, operationSuccessColor);
-            operationOutput.setText("Cover uploaded", juce::NotificationType::dontSendNotification);
-        }
-        else {
-            operationOutput.setColour(juce::Label::textColourId, operationFailColor);
-            operationOutput.setText("Cover was not uploaded", juce::NotificationType::dontSendNotification);
+            operationOutput.setText("Video was not uploaded", juce::NotificationType::dontSendNotification);
         }
     });
 }
@@ -167,12 +133,8 @@ void BeatUploaderAudioProcessorEditor::uploadClicked()
     }
 
     // check audio & image
-    if (audioFileData.getSize() == 0) {
-        operationOutput.setText("Audio was not provided", juce::NotificationType::dontSendNotification);
-        return;
-    }
-    if (imageFileData.getSize() == 0) {
-        operationOutput.setText("Cover was not provided", juce::NotificationType::dontSendNotification);
+    if (videoFileData.getSize() == 0) {
+        operationOutput.setText("Video was not provided", juce::NotificationType::dontSendNotification);
         return;
     }
 
@@ -183,7 +145,7 @@ void BeatUploaderAudioProcessorEditor::uploadClicked()
     operationOutput.setColour(juce::Label::ColourIds::textColourId, pluginFg);
     operationOutput.setText("Opening browser...", juce::NotificationType::dontSendNotification);
 
-    audioProcessor.startUpload(title, desc, audioFileData, imageFileData);
+    audioProcessor.startUpload(title, desc, videoFileData);
 }
 
 void BeatUploaderAudioProcessorEditor::paint(juce::Graphics& g)
@@ -211,11 +173,7 @@ void BeatUploaderAudioProcessorEditor::resized()
     songDesc.setBounds(sideMargin, yPosition, screenWidth - (2 * sideMargin), 130);
     yPosition += (130 + elementMargin);
 
-    audioSel.setBounds(sideMargin, yPosition, 110, 24);
-    imageSel.setBounds(screenWidth - (sideMargin + 110), yPosition, 110, 24);
-    //yPosition += (24 + sideMargin);
-
-    //emailInput.setBounds(sideMargin, yPosition, screenWidth - (2 * sideMargin), 27);
+    videoSel.setBounds(sideMargin, yPosition, screenWidth - (2 * sideMargin), 24);
 
     uploadBtn.setBounds(screenWidth - (sideMargin + 110), screenHeight - (32 + elementMargin + 24), 110, 24);
 
