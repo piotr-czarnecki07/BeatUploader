@@ -126,10 +126,6 @@ private:
         juce::URL::InputStreamOptions options(juce::URL::ParameterHandling::inPostData);
         std::unique_ptr<juce::InputStream> stream(backendUrl.createInputStream(options));
 
-        /*if (stream != nullptr) {
-            juce::String response = stream->readEntireStreamAsString();
-        }*/
-
         tempVideo.deleteFile();
     }
 };
