@@ -120,7 +120,6 @@ private:
 
         // add these files to request
         backendUrl = backendUrl.withFileToUpload("video_file.mp4", tempVideo, "video/mp4");
-            .withFileToUpload("image_file", tempImage, "image/png");
 
         // make request
         juce::URL::InputStreamOptions options(juce::URL::ParameterHandling::inPostData);
