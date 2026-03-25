@@ -39,7 +39,7 @@ For backend contribution, you need a `.env` file, that is made using [.env.examp
 
 ## VST File
 
-See
+See latest release.
 
 ## License
 
